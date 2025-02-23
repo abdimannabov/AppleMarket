@@ -1,13 +1,13 @@
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
-from core.views import *
+from django.urls import path, include
+from core.views import detail
 from market import settings
 
 urlpatterns = [
-    path('', index, name="index"),
-    path('contact/', contact, name="contact"),
+    path('', include('core.urls')),
     path('admin/', admin.site.urls),
+    path('item/<int:pk>/', detail, name="item")
 ]
 
 if settings.DEBUG:
