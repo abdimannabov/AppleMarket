@@ -1,6 +1,4 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView
-
+from django.shortcuts import render, get_object_or_404, redirect
 from core.forms import SignUpForm
 from core.models import *
 
@@ -26,8 +24,15 @@ def contact(request):
     return render(request, 'core/components/contact.html')
 
 def signup(request):
-    form = SignUpForm()
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
 
-    return render(request, 'core/components/sign_up.html', {
+        if form.is_valid():
+            form.save()
+            return redirect('/login/')
+    else:
+        form = SignUpForm()
+
+    return render(request, 'core/components/signup.html', {
         'form':form
     })
