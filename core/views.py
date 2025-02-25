@@ -42,5 +42,6 @@ def new(request):
     form = AddNewProduct()
 
     return render(request, 'core/components/form.html', {
-        'form':form
+        'form':form,
+        'title':"New Item"
     })
