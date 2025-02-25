@@ -39,7 +39,15 @@ def signup(request):
 
 @login_required
 def new(request):
-    form = AddNewProduct()
+    if request.method == "POST":
+        form = AddNewProduct(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.save()
+            return redirect('core:index')
+    else:
+        form = AddNewProduct()
+
 
     return render(request, 'core/components/form.html', {
         'form':form,
