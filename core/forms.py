@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Product
 
 class Login(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
@@ -33,3 +34,8 @@ class SignUpForm(UserCreationForm):
             'placeholder': "Repeat the password",
             'class': "w-full py-4 px-6 rounded-xl"
         }))
+
+class AddNewProduct(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('category', 'name', 'description', 'price', 'image')

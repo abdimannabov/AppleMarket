@@ -1,7 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from core.forms import SignUpForm
+from core.forms import SignUpForm, AddNewProduct
 from core.models import *
-
 
 # Create your views here.
 def index(request):
@@ -34,5 +34,13 @@ def signup(request):
         form = SignUpForm()
 
     return render(request, 'core/components/signup.html', {
+        'form':form
+    })
+
+@login_required
+def new(request):
+    form = AddNewProduct()
+
+    return render(request, 'core/components/form.html', {
         'form':form
     })
