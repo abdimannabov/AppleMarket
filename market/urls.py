@@ -7,7 +7,8 @@ from market import settings
 urlpatterns = [
     path('', include('core.urls')),
     path('admin/', admin.site.urls),
-    path('item/<int:pk>/', detail, name="item")
+    path('item/<int:pk>/', detail, name="item"),
+    path('dashboard/', include('dashboard.urls')),
 ]
 
 if settings.DEBUG:
