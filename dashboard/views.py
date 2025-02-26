@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
 from core.models import Product
@@ -12,3 +12,10 @@ def index(request):
         'items':items,
         'title':"Dashboard"
     })
+
+@login_required
+def delete(request, pk):
+    item = get_object_or_404(Product, pk=pk)
+    item.delete()
+
+    return redirect('dashboard:index')
