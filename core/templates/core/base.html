@@ -7,6 +7,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     {% block title %}
     {% endblock title %}
+    <link rel = "shortcut icon" type = "image" href="media/logo/apple.png">
 </head>
 <body>
 <nav class="py-6 px-6 flex justify-between items-center border-b border-gray-200">
@@ -16,8 +17,6 @@
     </a>
 
     <div class="space-x-6">
-        <a href="#" class="text-lg font-semibold hover:text-gray-500">Mac</a>
-        <a href="#" class="text-lg font-semibold hover:text-gray-500">IPhone</a>
         <a href="{% url 'core:contact' %}" class="text-lg font-semibold hover:text-gray-500">Contact</a>
         <a href="{% url 'core:search' %}" class="text-lg font-semibold hover:text-gray-500">Search</a>
 

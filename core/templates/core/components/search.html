@@ -10,6 +10,29 @@
 
             <button class="mt-2 py-2 px-4 text-lg bg-blue-500 text-white rounded-xl">Search</button>
         </form>
+
+        <hr class="my-6">
+
+        <p class="font-semibold">Categories</p>
+
+        <ul>
+            {% for category in categories %}
+            <li class="py-2 px-2 rounded-xl {% if category.id == category_id %} bg-gray-200{% endif %}">
+                <a href="{% url 'core:search' %}?query={{ query }}&category={{ category.id }}">{{ category.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <hr class="my-6">
+
+        <p class="font-semibold">Clear filters</p>
+
+        <ul>
+            <li>
+                <a href="{% url 'core:search' %}" class="mt-2 py-2 px-4 inline-block bg-yellow-300 text-lg rounded-xl text-white">Reset</a>
+            </li>
+        </ul>
+
     </div>
     <div class="col-span-3">
         <div class="grid grid-cols-3 gap-3">

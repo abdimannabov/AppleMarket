@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from core.forms import SignUpForm, AddNewProduct, EditProduct
+from core.forms import SignUpForm, AddNewProduct
 from core.models import *
 from django.db.models import Q
 # Create your views here.
@@ -57,11 +57,17 @@ def new(request):
 def search(request):
     query = request.GET.get('query', '')
     items = Product.objects.all()
-
+    category_id = request.GET.get('category', 0)
+    categories = Category.objects.all()
     if query:
         items = items.filter(Q(name__contains=query) | Q(description__icontains=query))
 
+    if category_id:
+        items = items.filter(category_id = category_id)
+
     return render(request, 'core/components/search.html', {
         'items': items,
-        'query':query
+        'query':query,
+        'categories':categories,
+        'category_id':int(category_id)
     })
