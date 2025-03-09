@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
@@ -25,3 +26,71 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, blank=True, null=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
+
+    def __str__(self):
+        return self.name
+
+class Order(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
+
+    @property
+    def get_cart_price(self):
+        order_products = self.orderproduct_set.all()
+        total_price = sum([product.price for product in order_products])
+        return total_price
+
+    @property
+    def get_cart_quantity(self):
+        order_products = self.orderproduct_set.all()
+        total_quantity = sum([product.quantity for product in order_products])
+        return total_quantity
+
+    def __str__(self):
+        return self.customer.name
+
+    class Meta:
+        verbose_name = "Order"
+        verbose_name_plural = "Orders"
+
+class OrderProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    quantity = models.IntegerField(default=0, blank=True, null=True)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def get_total_price(self):
+        total_price = self.product.price * self.quantity
+        return total_price
+
+    def __str__(self):
+        return self.product.title
+
+    class Meta:
+        verbose_name = "Order Product"
+        verbose_name_plural = "Order Products"
+
+class ShippingAddress(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    city = models.CharField(max_length=50)
+    street = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.city
+    class Meta:
+        verbose_name = "Address"
+        verbose_name_plural = "Addresses"
