@@ -45,13 +45,13 @@ class Order(models.Model):
     is_completed = models.BooleanField(default=False)
 
     @property
-    def get_cart_price(self):
+    def get_cart_total_price(self):
         order_products = self.orderproduct_set.all()
         total_price = sum([product.price for product in order_products])
         return total_price
 
     @property
-    def get_cart_quantity(self):
+    def get_cart_total_quantity(self):
         order_products = self.orderproduct_set.all()
         total_quantity = sum([product.quantity for product in order_products])
         return total_quantity
