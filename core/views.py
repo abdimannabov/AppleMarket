@@ -3,6 +3,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from core.forms import SignUpForm, AddNewProduct
 from core.models import *
 from django.db.models import Q
+from core.utils import get_cart_data, CartForUser
+from django.contrib import messages
+
 # Create your views here.
 def index(request):
     items = Product.objects.all()
@@ -71,3 +74,23 @@ def search(request):
         'categories':categories,
         'category_id':int(category_id)
     })
+
+def cart(request):
+    cart_info = get_cart_data(request)
+
+    context = {
+        "products":cart_info["products"],
+        "order":cart_info["order"],
+        "total_quantity":cart_info["cart_total_quantity"],
+        "total_price":cart_info["cart_total_price"],
+        "title":"Cart"
+    }
+    return render(request, "core/cart.html", context)
+
+def to_cart(request, product_id, action):
+    if request.user.is_authenticated:
+        user_cart = CartForUser(request, product_id, action)
+        return redirect("/cart/")
+    else:
+        messages.error(request, "You are not authenticated")
+        return redirect("/login/")

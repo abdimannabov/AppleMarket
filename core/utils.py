@@ -7,14 +7,14 @@ class CartForUser:
         if product_id and action:
             self.add_or_remove(product_id, action)
 
-    def add_or_delete(self, product_id, action):
+    def add_or_remove(self, product_id, action):
         order = self.get_cart_info()["order"]
         product = Product.objects.get(pk=product_id)
         order_product, created = OrderProduct.objects.get_or_create(
             order=order,
             product=product
         )
-        if action == "add" and order_product.quantity > 0:
+        if action == "add" and product.quantity > 0:
             order_product.quantity += 1
             product.quantity -= 1
         else:
@@ -26,7 +26,7 @@ class CartForUser:
     def get_cart_info(self):
         customer, created = Customer.objects.get_or_create(
             user=self.user,
-            name=self.user.name,
+            name=self.user.username,
             email=self.user.email
         )
         order, created = Order.objects.get_or_create(
@@ -49,7 +49,7 @@ def get_cart_data(request):
         cart_info = user_cart.get_cart_info()
     return {
         "products":cart_info["products"],
-        "order":cart_info["orders"],
+        "order":cart_info["order"],
         "cart_total_quantity":cart_info["cart_total_quantity"],
         "cart_total_price":cart_info["cart_total_price"]
     }

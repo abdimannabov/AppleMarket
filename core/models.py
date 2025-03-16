@@ -14,7 +14,8 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits = 10, decimal_places = 2, verbose_name = "Product Price")
+    quantity = models.IntegerField(default=0, verbose_name="Product Quantity")
     category = models.ForeignKey(Category, related_name="products", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="product_images")
 
@@ -47,7 +48,7 @@ class Order(models.Model):
     @property
     def get_cart_total_price(self):
         order_products = self.orderproduct_set.all()
-        total_price = sum([product.price for product in order_products])
+        total_price = sum([product.get_total_price for product in order_products])
         return total_price
 
     @property
@@ -75,7 +76,7 @@ class OrderProduct(models.Model):
         return total_price
 
     def __str__(self):
-        return self.product.title
+        return self.product.name
 
     class Meta:
         verbose_name = "Order Product"

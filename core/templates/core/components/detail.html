@@ -17,16 +17,19 @@
             <strong class="text-gray-500">Description: </strong>
             {{ item.description }}
         </p>
-        {% if request.user.is_authenticated %}
+        {% if request.user.is_authenticated and request.user.username == 'admin' %}
         <div class="mt-6 p-6 bg-white rounded-xl">
             <p>Action:</p>
-            <a href="{% url 'dashboard:edit' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-green-500 text-white rounded-xl">Edit</a>
-            <a href="{% url 'dashboard:delete' item.pk %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl">Delete</a>
+            <a href="{% url 'dashboard:edit' item.id %}"
+               class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-green-500 text-white rounded-xl">Edit</a>
+            <a href="{% url 'dashboard:delete' item.pk %}"
+               class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl">Delete</a>
         </div>
         {% else %}
-        <a href="#"
+        <a href="{% url 'core:to_cart' item.pk 'add' %}"
            class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Buy</a>
         {% endif %}
+
     </div>
 </div>
 
