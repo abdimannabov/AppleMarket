@@ -1,6 +1,8 @@
+import stripe
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from core.forms import SignUpForm, AddNewProduct
+from django.urls import reverse
+from core.forms import SignUpForm, AddNewProduct, CustomerForm, AddressForm
 from core.models import *
 from django.db.models import Q
 from core.utils import get_cart_data, CartForUser
@@ -83,6 +85,8 @@ def cart(request):
         "order":cart_info["order"],
         "total_quantity":cart_info["cart_total_quantity"],
         "total_price":cart_info["cart_total_price"],
+        "customer_form": CustomerForm(),
+        "address_form": AddressForm(),
         "title":"Cart"
     }
     return render(request, "core/cart.html", context)
@@ -94,3 +98,47 @@ def to_cart(request, product_id, action):
     else:
         messages.error(request, "You are not authenticated")
         return redirect("/login/")
+
+def payment(request):
+    from market import settings
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    if request.method == 'POST':
+        user_cart = CartForUser(request)
+        cart_info = user_cart.get_cart_info()
+        customer_form = CustomerForm(data=request.POST)
+        if customer_form.is_valid():
+            customer = Customer.objects.get(user=request.user)
+            customer.name = customer_form.cleaned_data['name']
+            customer.email = customer_form.cleaned_data['email']
+        address_form = AddressForm(data=request.POST)
+        if address_form.is_valid():
+            address = address_form.save(commit=False)
+            address.customer = Customer.objects.get(user=request.user)
+            address.order = user_cart.get_cart_info()['order']
+            address.save()
+        total_price = cart_info["cart_total_price"]
+        total_quantity = cart_info["cart_total_quantity"]
+        session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    "price_data":{
+                        "currency":"usd",
+                        "product_data":{
+                            'name':"products of TOTEMBO"
+                        },
+                        "unit_amount":int(total_price)
+                    },
+                    "quantity":total_quantity
+                }
+            ],
+            mode="payment",
+            success_url=request.build_absolute_uri(reverse("core:success")),
+            cancel_url=request.build_absolute_uri(reverse("core:cancel"))
+        )
+    return redirect(session.url, 303)
+
+def success_payment(request):
+    return render(request, "core/success.html")
+
+def cancel_payment(request):
+    return render(request, "core/cancel.html")

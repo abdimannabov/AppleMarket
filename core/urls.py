@@ -13,5 +13,8 @@ urlpatterns = [
     path('new/', views.new, name="new"),
     path('login/', auth_views.LoginView.as_view(template_name = 'core/components/login.html', authentication_form=Login), name="login"),
     path("cart/", views.cart, name="cart"),
-    path("to_cart/<int:product_id>/<str:action>/", views.to_cart, name="to_cart")
+    path("to_cart/<int:product_id>/<str:action>/", views.to_cart, name="to_cart"),
+    path("success/", views.success_payment, name="success"),
+    path("cancel/", views.cancel_payment, name="cancel"),
+    path("payment/", views.payment, name="payment")
 ]
